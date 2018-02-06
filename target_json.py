@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import io
 import sys
 import json
 from datetime import datetime
@@ -109,11 +110,11 @@ def main():
     else:
         config = {}
 
-    #input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-    with open('ads.json', 'r') as input:
-        state = persist_lines(config.get('delimiter', ''),
-                              config.get('state_file', None),
-                              input)
+    input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+    #with open('ads.json', 'r') as input:
+    state = persist_lines(config.get('delimiter', ''),
+                          config.get('state_file', None),
+                          input)
         
     emit_state(state)
     logger.debug("Exiting normally")
