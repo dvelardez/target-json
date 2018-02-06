@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='target-json',
-      version='0.0.1',
+      version='0.0.2',
       description='Singer.io target for writing JSON files',
       author='dvelardez',
       url='https://singer.io',
@@ -11,7 +11,7 @@ setup(name='target-json',
       py_modules=['target_json'],
       install_requires=[
           'jsonschema==2.6.0',
-          'singer-python==2.1.4',
+          'singer-python==5.0.4',
       ],
       entry_points='''
           [console_scripts]

@@ -55,8 +55,6 @@ set formatting parameters like the delimiter - see
 
 ---
 
-Copyright &copy; 2017 Stitch
-
 [Singer Tap]: https://singer.io
 [Braintree]: https://github.com/singer-io/tap-braintree
 [Freshdesk]: https://github.com/singer-io/tap-freshdesk
