@@ -21,18 +21,7 @@ def emit_state(state):
         sys.stdout.flush()
 
 
-def flatten(d, parent_key='', sep='__'):
-    items = []
-    for k, v in d.items():
-        new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, collections.MutableMapping):
-            items.extend(flatten(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, str(v) if type(v) is list else v))
-    return dict(items)
-
-
-def persist_lines(delimiter, lines, state_file=None):
+def persist_lines(delimiter, lines, state_file=None, bq_file_name_hook=False):
     state = None
     stream = None
     schemas = {}
@@ -61,11 +50,10 @@ def persist_lines(delimiter, lines, state_file=None):
             validators[o['stream']].validate(o['record'])
 
             filename = o['stream'] + '-' + now + '.json'
-
-            flattened_record = flatten(o['record'])
             
             with open(filename, 'a') as json_file:
-                json_file.write(json.dumps(flattened_record) + delimiter)
+                record = bq_hook(o['record']) if bq_file_name_hook else o['record']
+                json_file.write(json.dumps(record) + delimiter)
 
             state = None
         elif t == 'STATE':
@@ -99,6 +87,19 @@ def save_state(state_file, stream, state):
         outfile.write(json.dumps(actual_state))
 
 
+# Fields must contain only letters, numbers, and underscores, start
+# with a letter or underscore, and be at most 128 characters long.
+def bq_hook(obj):
+    for key in obj.keys():
+        new_key = key.replace(".", "_")
+        if new_key[0].isdigit():
+            new_key = "_" + new_key
+        if new_key != key:
+            obj[new_key] = obj[key]
+            del obj[key]
+    return obj
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', help='Config file')
@@ -115,7 +116,8 @@ def main():
     #with open('ads.json', 'r') as input:
     state = persist_lines(config.get('delimiter', ''),
                           input,
-                          args.state)
+                          args.state,
+                          config.get('bq_file_name_hook', False))
         
     emit_state(state)
     logger.debug("Exiting normally")

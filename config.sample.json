@@ -1,3 +1,4 @@
 {
-    "delimiter": "\n"
+    "delimiter": "\n",
+    "bq_file_name_hook": true
 }
