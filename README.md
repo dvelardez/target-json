@@ -26,8 +26,9 @@ and then run them together, piping the output of `tap-fixerio` to
 ```bash
 › pip install target-json tap-fixerio
 › tap-fixerio | target-json
-  INFO Replicating the latest exchange rate data from fixer.io
+  INFO Replicating exchange rate data from fixer.io starting from 2018-02-08
   INFO Tap exiting normally
+  {"start_date": "2018-02-08"}
 ```
 
 The data will be written to a file called `exchange_rate.json` in your
@@ -35,8 +36,7 @@ working directory.
 
 ```bash
 › cat exchange_rate.json
-AUD,BGN,BRL,CAD,CHF,CNY,CZK,DKK,GBP,HKD,HRK,HUF,IDR,ILS,INR,JPY,KRW,MXN,MYR,NOK,NZD,PHP,PLN,RON,RUB,SEK,SGD,THB,TRY,ZAR,EUR,USD,date
-1.3023,1.8435,3.0889,1.3109,1.0038,6.869,25.47,7.0076,0.79652,7.7614,7.0011,290.88,13317.0,3.6988,66.608,112.21,1129.4,19.694,4.4405,8.3292,1.3867,50.198,4.0632,4.2577,58.105,8.9724,1.4037,34.882,3.581,12.915,0.9426,1.0,2017-02-24T00:00:00Z
+{"AUD": 1.2712, "BGN": 1.5852, "BRL": 3.2477, "CAD": 1.2518, "CHF": 0.941, "CNY": 6.2746, "CZK": 20.449, "DKK": 6.0326, "EUR": 0.8105, "GBP": 0.71871, "HKD": 7.8184, "HRK": 6.0312, "HUF": 251.1, "IDR": 13559.0, "ILS": 3.4913, "INR": 64.245, "ISK": 101.31, "JPY": 109.29, "KRW": 1082.6, "MXN": 18.68, "MYR": 3.903, "NOK": 7.8309, "NZD": 1.3695, "PHP": 51.253, "PLN": 3.3713, "RON": 3.7733, "RUB": 57.158, "SEK": 7.9904, "SGD": 1.3204, "THB": 31.59, "TRY": 3.7835, "ZAR": 11.966, "USD": 1.0, "date": "2018-02-07T00:00:00Z"}
 ```
 
 If you're using a different Tap, substitute `tap-fixerio` in the final

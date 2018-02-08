@@ -32,7 +32,7 @@ def flatten(d, parent_key='', sep='__'):
     return dict(items)
 
 
-def persist_lines(delimiter, state_file, lines):
+def persist_lines(delimiter, lines, state_file=None):
     state = None
     stream = None
     schemas = {}
@@ -102,6 +102,7 @@ def save_state(state_file, stream, state):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', help='Config file')
+    parser.add_argument('-s', '--state', help='State file')
     args = parser.parse_args()
 
     if args.config:
@@ -113,8 +114,8 @@ def main():
     input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
     #with open('ads.json', 'r') as input:
     state = persist_lines(config.get('delimiter', ''),
-                          config.get('state_file', None),
-                          input)
+                          input,
+                          args.state)
         
     emit_state(state)
     logger.debug("Exiting normally")
