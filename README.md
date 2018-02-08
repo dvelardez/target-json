@@ -53,9 +53,37 @@ set formatting parameters like the delimiter - see
 › tap-fixerio | target-json -c my-config.json
 ```
 
+### Save State (optional)
+
+When `target-json` is run as above it writes log lines to `stderr`,
+but `stdout` is reserved for outputting **State** messages. A State
+message is a JSON-formatted line with data that the Tap wants
+persisted between runs - often "high water mark" information that the
+Tap can use to pick up where it left off on the next run. Read more
+about State messages in the [Singer spec].
+
+Targets write State messages to `stdout` once all data that appeared
+in the stream before the State message has been processed by the
+Target. Note that although the State message is sent into the target,
+in most cases the target's process won't actually store it anywhere or
+do anything with it other than repeat it back to `stdout`.
+
+Taps like the [`tap-fixerio`][Fixerio] can also accept a `--state` argument
+that, if present, points to a file containing the last persisted State
+value.  This enables Taps to work incrementally - the State
+checkpoints the last value that was handled by the Target, and the
+next time the Tap is run it should pick up from that point.
+
+To run the [`tap-fixerio`][Fixerio] incrementally, point it to a State file like this:
+
+```bash
+› tap-fixerio --state state.json | target-json -c config.json -s state.json
+```
+
 ---
 
 [Singer Tap]: https://singer.io
+[Singer spec]: https://github.com/singer-io/getting-started/blob/master/SPEC.md
 [Braintree]: https://github.com/singer-io/tap-braintree
 [Freshdesk]: https://github.com/singer-io/tap-freshdesk
 [Hubspot]: https://github.com/singer-io/tap-hubspot
