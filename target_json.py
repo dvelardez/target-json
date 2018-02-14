@@ -90,13 +90,17 @@ def save_state(state_file, stream, state):
 # Fields must contain only letters, numbers, and underscores, start
 # with a letter or underscore, and be at most 128 characters long.
 def bq_hook(obj):
-    for key in obj.keys():
-        new_key = key.replace(".", "_")
-        if new_key[0].isdigit():
-            new_key = "_" + new_key
-        if new_key != key:
-            obj[new_key] = obj[key]
-            del obj[key]
+    if isinstance(obj, dict):
+        for key in obj.keys():
+            if isinstance(obj[key], list):
+                for child in obj[key]:
+                    bq_hook(child)
+            new_key = key.replace(".", "_")
+            if new_key[0].isdigit():
+                new_key = "_" + new_key
+            if new_key != key:
+                obj[new_key] = obj[key]
+                del obj[key]
     return obj
 
 
@@ -112,9 +116,9 @@ def main():
     else:
         config = {}
 
-    input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-    #with open('ads.json', 'r') as input:
-    state = persist_lines(config.get('delimiter', ''),
+    #input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+    with open('ads.json', 'r') as input:
+        state = persist_lines(config.get('delimiter', ''),
                           input,
                           args.state,
                           config.get('bq_file_name_hook', False))
