@@ -81,7 +81,7 @@ def save_state(state_file, stream, state):
     with open(state_file, 'r') as json_file:
         actual_state = json.load(json_file)
         updated_time = state["bookmarks"][stream]["updated_time"]
-        actual_state[stream] = updated_time
+        actual_state["bookmarks"][stream]["updated_time"] = updated_time
 
     with open(state_file, 'w') as outfile:
         outfile.write(json.dumps(actual_state))
