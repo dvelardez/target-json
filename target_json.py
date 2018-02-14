@@ -116,9 +116,9 @@ def main():
     else:
         config = {}
 
-    #input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-    with open('ads.json', 'r') as input:
-        state = persist_lines(config.get('delimiter', ''),
+    input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+    #with open('ads.json', 'r') as input:
+    state = persist_lines(config.get('delimiter', ''),
                           input,
                           args.state,
                           config.get('bq_file_name_hook', False))
