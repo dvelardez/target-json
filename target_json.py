@@ -21,7 +21,7 @@ def emit_state(state):
         sys.stdout.flush()
 
 
-def persist_lines(delimiter, lines, state_file=None, bq_file_name_hook=False):
+def persist_lines(delimiter, lines, state_file=None, bq_field_name_hook=False, bookmark_keys={}):
     state = None
     stream = None
     schemas = {}
@@ -52,7 +52,7 @@ def persist_lines(delimiter, lines, state_file=None, bq_file_name_hook=False):
             filename = o['stream'] + '-' + now + '.json'
             
             with open(filename, 'a') as json_file:
-                record = bq_hook(o['record']) if bq_file_name_hook else o['record']
+                record = bq_hook(o['record']) if bq_field_name_hook else o['record']
                 json_file.write(json.dumps(record) + delimiter)
 
             state = None
@@ -60,7 +60,7 @@ def persist_lines(delimiter, lines, state_file=None, bq_file_name_hook=False):
             logger.debug('Setting state to {}'.format(o['value']))
             state = o['value']
             if state_file and stream:
-                save_state(state_file, stream, state)
+                save_state(state_file, stream, state, bookmark_keys)
         elif t == 'SCHEMA':
             if 'stream' not in o:
                 raise Exception("Line is missing required key 'stream': {}".format(line))
@@ -77,11 +77,12 @@ def persist_lines(delimiter, lines, state_file=None, bq_file_name_hook=False):
     return state
 
 
-def save_state(state_file, stream, state):
+def save_state(state_file, stream, state, bookmark_keys):
+    bookmark_key = bookmark_keys[stream]
     with open(state_file, 'r') as json_file:
         actual_state = json.load(json_file)
-        updated_time = state["bookmarks"][stream]["updated_time"]
-        actual_state["bookmarks"][stream]["updated_time"] = updated_time
+        bookmark_value = state["bookmarks"][stream][bookmark_key]
+        actual_state["bookmarks"][stream][bookmark_key] = bookmark_value
 
     with open(state_file, 'w') as outfile:
         outfile.write(json.dumps(actual_state))
@@ -117,11 +118,12 @@ def main():
         config = {}
 
     input = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
-    #with open('ads.json', 'r') as input:
+    #with open('ads_insights.json', 'r') as input:
     state = persist_lines(config.get('delimiter', ''),
                           input,
                           args.state,
-                          config.get('bq_file_name_hook', False))
+                          config.get('bq_field_name_hook', False),
+                          config.get('bookmark_keys', {}))
         
     emit_state(state)
     logger.debug("Exiting normally")

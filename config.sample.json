@@ -1,4 +1,13 @@
 {
     "delimiter": "\n",
-    "bq_file_name_hook": true
+    "bq_field_name_hook": true,
+    "bookmark_keys": {
+        "ads": "updated_time",
+        "adsets": "updated_time",
+        "campaigns": "updated_time",
+        "ads_insights": "date_start",
+        "ads_insights_age_and_gender": "date_start",
+        "ads_insights_country": "date_start",
+        "ads_insights_platform_and_device": "date_start"
+    }
 }
