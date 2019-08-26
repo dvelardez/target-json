@@ -92,7 +92,7 @@ def save_state(state_file, stream, state, bookmark_keys):
 # with a letter or underscore, and be at most 128 characters long.
 def bq_hook(obj):
     if isinstance(obj, dict):
-        for key in obj.keys():
+        for key in list(obj.keys()):
             if isinstance(obj[key], list):
                 for child in obj[key]:
                     bq_hook(child)
